@@ -30,6 +30,10 @@ The goals / steps of this effort are the following:
 [image11]: ./output_images/polynomial.png "Second Order Polynomial"
 [image12]: ./output_images/lane-lines.png "Lane Lines Identified"
 
+
+### The Code
+The main program is in the file befittingly named `main.py`.   There is another file `function.py` that has supporting functions used by the main program.
+
 ### Camera Calibration
 
 The code for this step is contained in (main.py lines 30-38).
@@ -77,12 +81,12 @@ To identify lane lines see (main.py lines 160-217) mostly code reused from relev
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
 The radius is computed using the average of the left and right radii.
-The distance between the vehicle and the center is a function of the average of the the lanes relative to the center.
+The distance between the vehicle and the center is a function of the average of the lanes relative to the center.
 The values of the radius and position are displayed on the video.
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-Here is an example of my result showing identified lane.
+Here is an example of my result showing identified lanes:
 
 
 ![alt text][image12]
@@ -93,9 +97,10 @@ Here is an example of my result showing identified lane.
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-Here's a [link to my video result](./output.mp4)
+Here's a direct link to YouTube for the result on the entire project video:  [Advanced lane finding video output](https://youtu.be/4kHg892OFAo)
 
-Here's a direct link to youtube for the result on the entire project video:  [Advanced lane finding video output](https://youtu.be/4kHg892OFAo)
+Here's a [direct link to my video file](./output.mp4)
+
 
 ---
 
@@ -107,7 +112,8 @@ Challenges Faced:
   1. Proper thresholding to identify the lanes.
 
 Improvements:
-  1. Variance in road lighting can give problems.  There is room to improve here.
+  1. Variance in road lighting can give problems.  There is room to improve on this.
 
 Potential Problem ?
-  1.  Velocity of the car be a factor in the rendering of the video.  It worth exploring how efficient the program will work as the rate of the vehicles velocity increases.
+  1.  Velocity of the car be a factor in the rendering of the video.  It would be worth exploring how efficient
+      the program will work as the rate of the vehicles velocity increases.
