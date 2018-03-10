@@ -1,21 +1,8 @@
 ## Advanced Lane Finding
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
-
-In this project, your goal is to write a software pipeline to identify the lane boundaries in a video, but the main output or product we want you to create is a detailed writeup of the project.  Check out the [writeup template](https://github.com/udacity/CarND-Advanced-Lane-Lines/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup.  
-
-Creating a great writeup:
----
-A great writeup should include the rubric points as well as your description of how you addressed each point.  You should include a detailed description of the code used in each step (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
-
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
-
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
-
-The Project
 ---
 
-The goals / steps of this project are the following:
+The goals / steps of this effort are the following:
 
 * Compute the camera calibration matrix and distortion coefficients given a set of chessboard images.
 * Apply a distortion correction to raw images.
@@ -26,14 +13,101 @@ The goals / steps of this project are the following:
 * Warp the detected lane boundaries back onto the original image.
 * Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
 
-The images for camera calibration are stored in the folder called `camera_cal`.  The images in `test_images` are for testing your pipeline on single frames.  If you want to extract more test images from the videos, you can simply use an image writing method like `cv2.imwrite()`, i.e., you can read the video in frame by frame as usual, and for frames you want to save for later you can write to an image file.  
+[//]: # (Image References)
 
-To help the reviewer examine your work, please save examples of the output from each stage of your pipeline in the folder called `ouput_images`, and include a description in your writeup for the project of what each image shows.    The video called `project_video.mp4` is the video your pipeline should work well on.  
+[image1]: ./examples/undistort_output.png "Undistorted"
+[image2]: ./test_images/test1.jpg "Road Transformed"
+[image3]: ./examples/binary_combo_example.jpg "Binary Example"
+[image4]: ./examples/warped_straight_lines.jpg "Warp Example"
+[image5]: ./examples/color_fit_lines.jpg "Fit Visual"
+[image6]: ./examples/example_output.jpg "Output"
+[video1]: ./project_video.mp4 "Video"
+[video2]: ./output.mp4 "Video Output Result"
+[image7]: ./output_images/chessboard-original-undistorted.png "Chessboard Undistorted"
+[image8]: ./output_images/source_highway_original_undistorted.png "Highway Undistorted"
+[image9]: ./output_images/source_highway_thresholded_magnitude.png "Thresholded Magnitude"
+[image10]: ./output_images/source_highway_undistorted_warped.png "Warped"
+[image11]: ./output_images/polynomial.png "Second Order Polynomial"
+[image12]: ./output_images/lane-lines.png "Lane Lines Identified"
 
-The `challenge_video.mp4` video is an extra (and optional) challenge for you if you want to test your pipeline under somewhat trickier conditions.  The `harder_challenge.mp4` video is another optional challenge and is brutal!
+### Camera Calibration
 
-If you're feeling ambitious (again, totally optional though), don't stop there!  We encourage you to go out and take video of your own, calibrate your camera and show us how you would implement this project from scratch!
+The code for this step is contained in (main.py lines 30-38).
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+I started by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world (main.py lines 21-22).
+Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
 
+I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result:
+
+![alt text][image7]
+
+
+
+### Pipeline (single images)
+
+#### 1. The following is an example of a distortion-corrected image.
+
+To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
+![alt text][image8]
+
+#### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
+
+To achieve a thresholded binary image I experimented with various methods refer to (function.py lines 10-86).
+A combination of absolute, magnitude, direction methods were applied which resulted in desired output.
+To futher improve on this, LUV/Lab combinations was tried.  The B and L channels were the best choice
+to lighting variance on sections of the road.  Refer to (function.py) for details.
+The resulting ouptput was:
+
+![alt text][image9]
+
+#### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
+
+The code for my perspective transform includes a function called `warper()`, which appears in lines 89 through 112 in the file `function.py`.  I used the cv2.warpPerspective function to achieve this refer to (function.py lines 89-112)
+The challenge was a trail and error to find the correct values for `src` and `dst` (function.py lines 103,105).  
+See the resultant image below:
+
+![alt text][image10]
+
+#### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial? (lane line pixels)
+
+To identify lane lines see (main.py lines 160-217) mostly code reused from relevant lectures.  I applied second order polynomial for this.
+
+![alt text][image11]
+
+#### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
+
+The radius is computed using the average of the left and right radii.
+The distance between the vehicle and the center is a function of the average of the the lanes relative to the center.
+The values of the radius and position are displayed on the video.
+
+#### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
+
+Here is an example of my result showing identified lane.
+
+
+![alt text][image12]
+
+---
+
+### Pipeline (video)
+
+#### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
+
+Here's a [link to my video result](./output.mp4)
+
+Here's a direct link to youtube for the result on the entire project video:  [Advanced lane finding video output](https://youtu.be/4kHg892OFAo)
+
+---
+
+### Discussion
+
+#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.
+
+Challenges Faced:
+  1. Proper thresholding to identify the lanes.
+
+Improvements:
+  1. Variance in road lighting can give problems.  There is room to improve here.
+
+Potential Problem ?
+  1.  Velocity of the car be a factor in the rendering of the video.  It worth exploring how efficient the program will work as the rate of the vehicles velocity increases.
