@@ -32,7 +32,8 @@ The goals / steps of this effort are the following:
 
 
 ### The Code
-The main program is in the file befittingly named `main.py`.   There is another file `function.py` that has supporting functions used by the main program.
+The main program is in the file befittingly named `main.py`.   It can be executed from the terminal.  
+There is another file `function.py` that has supporting functions used by the main program.
 
 ### Camera Calibration
 
